@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Adrian "asie" Siekierka, 2023
+
+pkgname=thirdparty-blocksds-gbajpeg
+groups=(thirdparty-blocksds-extra)
+pkgver=`date "+%Y%m%d"`
+pkgrel=1
+epoch=
+pkgdesc="Lightweight GBA/NDS-optimized JPEG decoder"
+arch=(any)
+source=("$pkgname::git+https://github.com/blocksds/gbajpeg#branch=master")
+url="https://github.com/blocksds/gbajpeg"
+license=("PD")
+depends=(thirdparty-blocksds-toolchain)
+sha256sums=('SKIP')
+options=('!strip')
+
+. "/wf/config/runtime-env-vars.sh"
+
+# . "../templates/git-pkgver.PKGBUILD"
+
+build() {
+	wf_use_toolchain gcc-arm-none-eabi arm-none-eabi
+
+	cd "$pkgname"
+	make
+}
+
+package() {
+	cd "$pkgname"
+	
+	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
+	make -j1 install
+}

@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Adrian "asie" Siekierka, 2023
+
+pkgname=thirdparty-blocksds-nflib
+groups=(thirdparty-blocksds-extra)
+pkgver=`date "+%Y%m%d"`
+pkgrel=1
+epoch=
+pkgdesc="NightFox's library written in C to make it easier to develop for the NDS"
+arch=(any)
+source=("$pkgname::git+https://github.com/knightfox75/nds_nflib#branch=master")
+url="https://github.com/knightfox75/nds_nflib"
+license=("MIT")
+depends=(thirdparty-blocksds-toolchain)
+sha256sums=('SKIP')
+options=('!strip')
+
+. "/wf/config/runtime-env-vars.sh"
+
+# . "../templates/git-pkgver.PKGBUILD"
+
+build() {
+	wf_use_toolchain gcc-arm-none-eabi arm-none-eabi
+
+	cd "$pkgname"
+	make -f Makefile
+}
+
+package() {
+	cd "$pkgname"
+	
+	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
+	make -j1 install
+}
