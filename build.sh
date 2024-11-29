@@ -10,12 +10,26 @@
 # Example:
 #  ./build.sh --install       # Builds all packages and installs them too
 #  ./build.sh --install sdl2  # Builds package SDL2 + deps and installs them
+#
+# On GitHub actions it is required to use "--retry":
+#
+#  ./build.sh --install --retry
 
 set -e
+
+recursive_args=""
 
 doinstall=""
 if [ "$1" == "--install" ]; then
   doinstall="true"
+  recursive_args="$recursive_args --install"
+  shift
+fi
+
+doretry=""
+if [ "$1" == "--retry" ]; then
+  doretry="true"
+  recursive_args="$recursive_args --retry"
   shift
 fi
 
@@ -36,18 +50,19 @@ do
   fi
 
   for pkgdep in $(bash -c "./parse_pkgbuild.sh $pkgdir/PKGBUILD depends"); do
-    if [ -z $doinstall ]; then
-      ./build.sh "$pkgdep"
-    else
-      ./build.sh --install "$pkgdep"
-    fi
+    ./build.sh $recursive_args "$pkgdep"
   done
 
   pkgfile=$(bash -c "./parse_pkgbuild.sh $pkgdir/PKGBUILD pkgoutput")
 
   if [[ ! -f "${pkgdir}/${pkgfile}" ]]; then
     echo "Building $pkgdir ..."
-    (cd $pkgdir && wf-makepkg -s)
+    cd $pkgdir
+    if [ ! -z "$doretry" ]; then
+      wf-makepkg -sf --noconfirm || true
+    fi
+    wf-makepkg -sf --noconfirm
+    cd ..
   fi
 
   if [ ! -z "$doinstall" ]; then
