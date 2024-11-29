@@ -16,6 +16,7 @@ license=("PD")
 depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
+replaces=(thirdparty-blocksds-gbajpeg)
 
 build() {
 	cd "$pkgname"

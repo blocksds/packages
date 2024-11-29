@@ -16,6 +16,7 @@ license=("Zlib")
 depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
+replaces=(thirdparty-blocksds-libdsf)
 
 build() {
 	cd "$pkgname"

@@ -16,6 +16,7 @@ license=("MIT")
 depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
+replaces=(thirdparty-blocksds-nflib)
 
 build() {
 	cd "$pkgname"

@@ -16,6 +16,7 @@ license=("complex")
 depends=(runtime-musl)
 sha256sums=('SKIP')
 options=('!strip')
+replaces=(thirdparty-blocksds-docs)
 
 prepare() {
 	cd "$pkgname"

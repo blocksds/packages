@@ -29,7 +29,12 @@ makedepends=(
 optdepends=(
 	'toolchain-gcc-arm-none-eabi-extra: additional libraries'
 )
-replaces=(blocksds-toolchain blocksds-git-toolchain)
+replaces=(
+	thirdparty-blocksds-toolchain
+	thirdparty-blocksds-git-toolchain
+	blocksds-toolchain
+	blocksds-git-toolchain
+)
 options=('!strip')
 
 . "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
