@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: CC0-1.0
 #
 # SPDX-FileContributor: Adrian "asie" Siekierka, 2023
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
 
-pkgname=thirdparty-blocksds-nitroengine
-groups=(thirdparty-blocksds-extra)
+pkgname=blocksds-nitroengine
+groups=(blocksds-extra)
 pkgver=0.14.0
 pkgrel=1
 epoch=
@@ -12,16 +13,13 @@ arch=(any)
 source=("$pkgname::git+https://github.com/AntonioND/nitro-engine#tag=v$pkgver")
 url="https://github.com/AntonioND/nitro-engine"
 license=("MIT")
-depends=(thirdparty-blocksds-toolchain)
+depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
 
-. "/wf/config/runtime-env-vars.sh"
-
 build() {
-	wf_use_toolchain gcc-arm-none-eabi arm-none-eabi
-
 	cd "$pkgname"
+
 	make
 }
 

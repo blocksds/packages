@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: CC0-1.0
 #
 # SPDX-FileContributor: Adrian "asie" Siekierka, 2023, 2024
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
 
 pkgname=(blocksds-toolchain blocksds-docs)
-source=("blocksds::git+file://`pwd`/..")
+# Clone the repository into a new folder called "blocksds" so that it can be
+# used by all the packages defined in this file.
+source=("blocksds::git+https://github.com/blocksds/sdk#branch=master")
 sha256sums=('SKIP')
 groups=(blocksds)
 pkgver=1.6.3
@@ -28,7 +31,7 @@ makedepends=(
 optdepends=(
 	'toolchain-gcc-arm-none-eabi-extra: additional libraries'
 )
-replaces=(thirdparty-blocksds-toolchain thirdparty-blocksds-git-toolchain)
+replaces=(blocksds-toolchain blocksds-git-toolchain)
 options=('!strip')
 
 . "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
@@ -42,6 +45,7 @@ fi
 
 prepare() {
 	cd "blocksds"
+
 	git submodule update --init --recursive
 
 	wf_disable_host_build
@@ -53,14 +57,14 @@ prepare() {
 }
 
 build() {
-	wf_use_toolchain gcc-arm-none-eabi arm-none-eabi
-
 	cd "blocksds"
+
 	BLOCKSDS=`pwd` make
 }
 
 package_blocksds-toolchain() {
 	cd "blocksds"
+
 	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
 
 	BLOCKSDS=`pwd` INSTALLDIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core make -j1 install
@@ -76,7 +80,7 @@ package_blocksds-toolchain() {
 package_blocksds-docs() {
 	depends=(blocksds-toolchain)
 	optdepends=()
-	replaces=(thirdparty-blocksds-docs thirdparty-blocksds-git-docs)
+	replaces=(blocksds-docs blocksds-git-docs)
 
 	cd "blocksds"
 

@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: CC0-1.0
 #
 # SPDX-FileContributor: Adrian "asie" Siekierka, 2023
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
 
-pkgname=thirdparty-blocksds-nflib
-groups=(thirdparty-blocksds-extra)
+pkgname=blocksds-nflib
+groups=(blocksds-extra)
 pkgver=`date "+%Y%m%d"`
 pkgrel=1
 epoch=
@@ -12,24 +13,19 @@ arch=(any)
 source=("$pkgname::git+https://github.com/knightfox75/nds_nflib#branch=master")
 url="https://github.com/knightfox75/nds_nflib"
 license=("MIT")
-depends=(thirdparty-blocksds-toolchain)
+depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
 
-. "/wf/config/runtime-env-vars.sh"
-
-# . "../templates/git-pkgver.PKGBUILD"
-
 build() {
-	wf_use_toolchain gcc-arm-none-eabi arm-none-eabi
-
 	cd "$pkgname"
+
 	make -f Makefile
 }
 
 package() {
 	cd "$pkgname"
-	
+
 	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
 	make -j1 install
 }
