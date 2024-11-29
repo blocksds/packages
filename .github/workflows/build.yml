@@ -100,3 +100,108 @@ jobs:
         with:
           name: Pacman packages (Linux, ${{ matrix.arch }})
           path: ${{ github.workspace }}/*/*.pkg.tar.xz
+
+  generate_website:
+    name: Generate website
+    if: contains(github.ref,'refs/heads/master')
+    needs: [build_linux]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64]
+
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Alpine Linux
+        uses: jirutka/setup-alpine@v1
+        with:
+          branch: v3.20
+          arch: ${{ matrix.arch }}
+          packages: >
+            bash
+            build-base
+            coreutils
+            curl
+            envsubst
+            fakeroot
+            git
+            libarchive-tools
+            patchelf
+            sed
+            sudo
+            xz
+            zstd
+
+      # This folder needs to be created as root, but regular users need to be
+      # able to modify it.
+      - name: Create /opt/wonderful folder
+        run: |
+          sudo sh -c "mkdir /opt/wonderful && chown -R runner /opt/wonderful"
+        shell: alpine.sh --root {0}
+
+      - name: Install Wonderful
+        run: |
+          cd /opt/wonderful
+          curl https://wonderful.asie.pl/bootstrap/wf-bootstrap-${{ matrix.arch }}.tar.gz | tar xzvf -
+        shell: alpine.sh {0}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create repo files
+        run: |
+          export PATH=/opt/wonderful/bin:$PATH
+
+          tree
+
+          mkdir repo
+          cp -f Pacman*/*/*.pkg.tar.xz repo/
+
+          tree
+
+          #./make-repo-html.sh
+
+          cd repo
+
+          #tree
+
+          wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
+
+          tree
+
+          # Remove symlinks for GitHub pages
+          rm blocksds.db
+          rm blocksds.files
+          cp blocksds.db.tar.xz blocksds.db
+          cp blocksds.files.tar.xz blocksds.files
+
+          tar -cvf ../repo.tar ./*
+        shell: alpine.sh {0}
+
+      - name: Upload repo artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: repo.tar
+
+  publish_repo:
+    name: Publish website with GitHub pages
+    if: contains(github.ref,'refs/heads/master')
+    needs: [generate_website]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
