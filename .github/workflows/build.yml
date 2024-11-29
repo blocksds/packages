@@ -319,8 +319,6 @@ jobs:
 
           bash gen_index.sh packages/ false
 
-          echo "blocksds.skylyrac.net" > packages/CNAME
-
           # Create tarball with everything to upload to GitHub pages
           cd packages
           tar -cvf ../repo.tar ./*
