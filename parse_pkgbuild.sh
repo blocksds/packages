@@ -1,5 +1,5 @@
 #!/bin/bash
-# parse_pspbuild.sh by Wouter Wijsman (wwijsman@live.nl)
+# parse_pkgbuild.sh by Wouter Wijsman (wwijsman@live.nl)
 
 source "${1}"
 

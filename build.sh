@@ -22,7 +22,7 @@ fi
 if [ -z "$1" ]
 then
   # By default build them all
-  PKG_LIST=$(find . -name "PSPBUILD" -exec sh -c 'echo $(basename $(dirname $0))' {} \;)
+  PKG_LIST=$(find . -name "PKGBUILD" -exec sh -c 'echo $(basename $(dirname $0))' {} \;)
 else
   PKG_LIST=$1
 fi
@@ -30,12 +30,12 @@ fi
 for pkgdir in $PKG_LIST;
 do
 
-  if [[ ! -f "$pkgdir/PSPBUILD" ]]; then
+  if [[ ! -f "$pkgdir/PKGBUILD" ]]; then
     echo "Package $pkgdir does not exist!"
     continue
   fi
 
-  for pkgdep in $(bash -c "./parse_pspbuild.sh $pkgdir/PSPBUILD depends"); do
+  for pkgdep in $(bash -c "./parse_pkgbuild.sh $pkgdir/PKGBUILD depends"); do
     if [ -z $doinstall ]; then
       ./build.sh "$pkgdep"
     else
@@ -43,17 +43,16 @@ do
     fi
   done
 
-  pkgfile=$(bash -c "./parse_pspbuild.sh $pkgdir/PSPBUILD pkgoutput")
+  pkgfile=$(bash -c "./parse_pkgbuild.sh $pkgdir/PKGBUILD pkgoutput")
 
   if [[ ! -f "${pkgdir}/${pkgfile}" ]]; then
     echo "Building $pkgdir ..."
-    (cd $pkgdir && psp-makepkg)
+    (cd $pkgdir && wf-makepkg -s)
   fi
 
   if [ ! -z "$doinstall" ]; then
     echo "Installing $pkgdir"
-    psp-pacman -U --noconfirm "${pkgdir}/${pkgfile}" --overwrite '*'
+    wf-pacman -U --noconfirm "${pkgdir}/${pkgfile}" --overwrite '*'
   fi
 
 done
-
