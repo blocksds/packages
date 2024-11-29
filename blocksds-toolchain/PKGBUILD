@@ -57,7 +57,7 @@ prepare() {
 build() {
 	cd "$pkgname"
 
-	BLOCKSDS=`pwd` make
+	BLOCKSDS=`pwd` make -j`nproc`
 }
 
 package() {

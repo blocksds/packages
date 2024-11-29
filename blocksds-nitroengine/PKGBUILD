@@ -27,5 +27,5 @@ package() {
 	cd "$pkgname"
 
 	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
-	make -j1 install
+	make -j`nproc` install
 }
