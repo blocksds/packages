@@ -14,7 +14,7 @@ case "${2}" in
     echo "${pkgname}"
     ;;
 "pkgoutput")
-    echo "${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.gz"
+    echo "${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
     ;;
 esac
 
