@@ -197,7 +197,6 @@ jobs:
 
   generate_website:
     name: Generate website
-    if: contains(github.ref,'refs/heads/master')
     needs: [build_linux, build_windows]
     runs-on: ubuntu-latest
     strategy:
@@ -271,8 +270,6 @@ jobs:
 
           tree
 
-          # ./make-repo-html.sh
-
           cd packages/rolling/linux/x86_64/
 
             wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
@@ -282,8 +279,6 @@ jobs:
             rm blocksds.files
             cp blocksds.db.tar.xz blocksds.db
             cp blocksds.files.tar.xz blocksds.files
-
-            ls * > index.html
 
           cd ../../../..
 
@@ -297,8 +292,6 @@ jobs:
             cp blocksds.db.tar.xz blocksds.db
             cp blocksds.files.tar.xz blocksds.files
 
-            ls * > index.html
-
           cd ../../../..
 
           cd packages/rolling/windows/x86_64/
@@ -311,15 +304,25 @@ jobs:
             cp blocksds.db.tar.xz blocksds.db
             cp blocksds.files.tar.xz blocksds.files
 
-            ls * > index.html
-
           cd ../../../..
 
+          # Generate basic index files
+
+          bash gen_index.sh packages/rolling/linux/x86_64/ true
+          bash gen_index.sh packages/rolling/linux/aarch64/ true
+          bash gen_index.sh packages/rolling/windows/x86_64/ true
+
+          bash gen_index.sh packages/rolling/linux/ true
+          bash gen_index.sh packages/rolling/windows/ true
+
+          bash gen_index.sh packages/rolling/ true
+
+          bash gen_index.sh packages/ false
+
+          echo "blocksds.skylyrac.net" > packages/CNAME
+
           # Create tarball with everything to upload to GitHub pages
-          mkdir out
-          mv packages out
-          cd out
-          echo "blocksds.skylyrac.net" > CNAME
+          cd packages
           tar -cvf ../repo.tar ./*
 
       - name: Upload repo artifact
