@@ -11,8 +11,8 @@ set -a
 set -e
 
 # Set global variables
-GITHUB_REPOSITORY_OWNER="${GITHUB_REPOSITORY_OWNER:-pspdev}"
-GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-pspdev/pspdev}"
+GITHUB_REPOSITORY_OWNER="${GITHUB_REPOSITORY_OWNER:-BlocksDS}"
+GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-blocksds/blocksds-packages}"
 INDEX_TABLE_CONTENT=""
 
 # Build the html pages
