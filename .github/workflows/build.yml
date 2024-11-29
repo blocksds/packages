@@ -114,10 +114,91 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+  # https://wonderful.asie.pl/wiki/doku.php?id=getting_started
+  build_windows:
+    name: Build Pacman packages (Windows)
+    runs-on: windows-latest
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: ucrt64
+          update: true
+          install: |
+            base-devel
+            gcc
+            git
+            libarchive
+            libtool
+            lld
+            make
+            mingw-w64-ucrt-x86_64-ca-certificates
+            mingw-w64-ucrt-x86_64-iconv
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-python-poetry
+            mingw-w64-ucrt-x86_64-toolchain
+            wget
+
+      - name: Install Wonderful
+        shell: msys2 {0}
+        run: |
+          mkdir /opt/wonderful
+          cd /opt/wonderful
+
+          wget https://wonderful.asie.pl/bootstrap/wf-bootstrap-windows-x86_64.tar.gz
+          tar -xzvf wf-bootstrap-windows-x86_64.tar.gz
+
+      - name: Install prerequisites (Wonderful)
+        shell: msys2 {0}
+        run: |
+          export PATH=/opt/wonderful/bin:$PATH
+          export WONDERFUL_TOOLCHAIN=/opt/wonderful/
+
+          wf-pacman -Syu --noconfirm
+          wf-pacman -Syu --noconfirm \
+                wonderful-base \
+                wf-pacman \
+                runtime-gcc-libs \
+                toolchain-gcc-arm-none-eabi
+
+      - name: Set Git line endings to LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Clone project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build packages
+        shell: msys2 {0}
+        run: |
+          bash build.sh blocksds-toolchain
+
+          mkdir -p out
+          mv */*.pkg.tar.xz out
+
+          echo "Artifacts:"
+          echo "=========="
+          ls out
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages_windows_x86_64
+          path: out
+          compression-level: 0
+          if-no-files-found: error
+
   generate_website:
     name: Generate website
     if: contains(github.ref,'refs/heads/master')
-    needs: [build_linux]
+    needs: [build_linux, build_windows]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -174,6 +255,7 @@ jobs:
 
           mkdir -p packages/rolling/linux/x86_64/
           mkdir -p packages/rolling/linux/aarch64/
+          mkdir -p packages/rolling/windows/x86_64/
 
           # The architecture-agnostic and OS-agnostic packages are only built
           # in the Linux x86_64 build, so they need to be copied to the other
@@ -183,6 +265,9 @@ jobs:
 
           cp packages_linux_x86_64/*any.pkg.tar.xz packages/rolling/linux/aarch64/
           cp packages_linux_aarch64/*.pkg.tar.xz packages/rolling/linux/aarch64/
+
+          cp packages_linux_x86_64/*any.pkg.tar.xz packages/rolling/windows/x86_64/
+          cp packages_windows_x86_64/*.pkg.tar.xz packages/rolling/windows/x86_64/
 
           tree
 
@@ -203,6 +288,20 @@ jobs:
           cd ../../../..
 
           cd packages/rolling/linux/aarch64/
+
+            wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
+
+            # Remove symlinks for GitHub pages
+            rm blocksds.db
+            rm blocksds.files
+            cp blocksds.db.tar.xz blocksds.db
+            cp blocksds.files.tar.xz blocksds.files
+
+            ls * > index.html
+
+          cd ../../../..
+
+          cd packages/rolling/windows/x86_64/
 
             wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
 
