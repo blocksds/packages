@@ -20,15 +20,19 @@ An overview of libaries available can be viewed with:
 wf-pacman -Ss
 ```
 
-Installing all available libraries can be done with:
+Installing default packages (SDK and documentation) can be done with:
 
 ```
-## WIP
 wf-pacman -Sy
-wf-pacman -S pspdev-default
+wf-pacman -S blocksds-default
 ```
 
-Updating libraries can be done with:
+You can install the additional packages (non-core libraries) with:
+```
+wf-pacman -S blocksds-extra
+```
+
+To update the packages, run:
 
 ```
 wf-pacman -Syu
