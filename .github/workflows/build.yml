@@ -82,14 +82,13 @@ jobs:
       - name: Build packages
         shell: alpine.sh {0}
         run: |
-          # FIXME: The first launch of fakeroot via wf-makepkg seems to emit a
-          # SIGUSR1 in this environment. Thankfully, executing it again picks
-          # up right where it left off.
-          bash build.sh --retry blocksds-toolchain
-          bash install.sh blocksds-toolchain
+          bash build.sh blocksds-toolchain
 
           # Only build architecture-agnostic packages once
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
+            # Install the SDK so that we can build other libs
+            bash install.sh blocksds-toolchain
+
             export BLOCKSDS=/opt/wonderful/thirdparty/blocksds/core/
             export BLOCKSDSEXT=/opt/wonderful/thirdparty/blocksds/external/
 
