@@ -316,7 +316,11 @@ jobs:
           cd ../../../..
 
           # Create tarball with everything to upload to GitHub pages
-          tar -cvf repo.tar packages
+          mkdir out
+          mv packages out
+          cd out
+          echo "blocksds.skylyrac.net" > CNAME
+          tar -cvf ../repo.tar ./*
 
       - name: Upload repo artifact
         uses: actions/upload-artifact@v4
