@@ -1,73 +1,36 @@
 #!/bin/bash
 # build.sh by davidgfnet
 
-# Will build the specified package or all of them if none are specified
+# Will build the specified packages.
+#
 # Example:
-#  ./build.sh        # Builds all packages
-#  ./build.sh sdl2   # Builds package SDL2 (and all its dependencies)
+#  ./build.sh sdl2 # Builds package SDL2
 #
-# It is also possible to install the packages with --install
-# Example:
-#  ./build.sh --install       # Builds all packages and installs them too
-#  ./build.sh --install sdl2  # Builds package SDL2 + deps and installs them
+# On GitHub actions it is required to use "--retry" in the first package:
 #
-# On GitHub actions it is required to use "--retry":
-#
-#  ./build.sh --install --retry
+#  ./build.sh --retry sdl2
 
 set -e
 
-recursive_args=""
-
-doinstall=""
-if [ "$1" == "--install" ]; then
-  doinstall="true"
-  recursive_args="$recursive_args --install"
-  shift
-fi
-
 doretry=""
 if [ "$1" == "--retry" ]; then
-  doretry="true"
-  recursive_args="$recursive_args --retry"
-  shift
+    doretry="true"
+    shift
 fi
 
 if [ -z "$1" ]
 then
-  # By default build them all
-  PKG_LIST=$(find . -name "PKGBUILD" -exec sh -c 'echo $(basename $(dirname $0))' {} \;)
+    echo "Specify a package to build!"
+    exit 1
 else
-  PKG_LIST=$1
+    pkgdir=$1
 fi
 
-for pkgdir in $PKG_LIST;
-do
+echo "Building $pkgdir ..."
 
-  if [[ ! -f "$pkgdir/PKGBUILD" ]]; then
-    echo "Package $pkgdir does not exist!"
-    continue
-  fi
+cd $pkgdir
 
-  for pkgdep in $(bash -c "./parse_pkgbuild.sh $pkgdir/PKGBUILD depends"); do
-    ./build.sh $recursive_args "$pkgdep"
-  done
-
-  pkgfile=$(bash -c "./parse_pkgbuild.sh $pkgdir/PKGBUILD pkgoutput")
-
-  if [[ ! -f "${pkgdir}/${pkgfile}" ]]; then
-    echo "Building $pkgdir ..."
-    cd $pkgdir
-    if [ ! -z "$doretry" ]; then
-      wf-makepkg -sf --noconfirm || true
-    fi
-    wf-makepkg -sf --noconfirm
-    cd ..
-  fi
-
-  if [ ! -z "$doinstall" ]; then
-    echo "Installing $pkgdir"
-    wf-pacman -U --noconfirm "${pkgdir}/${pkgfile}" --overwrite '*'
-  fi
-
-done
+if [ ! -z "$doretry" ]; then
+    wf-makepkg -s --noconfirm || true
+fi
+wf-makepkg -s --noconfirm

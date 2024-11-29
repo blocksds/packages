@@ -11,7 +11,8 @@ set -a
 set -e
 
 # Set global variables
-GITHUB_REPOSITORY_OWNER="${GITHUB_REPOSITORY_OWNER:-BlocksDS}"
+#GITHUB_REPOSITORY_OWNER="${GITHUB_REPOSITORY_OWNER:-BlocksDS}"
+GITHUB_REPOSITORY_OWNER="BlocksDS"
 GITHUB_REPOSITORY="${GITHUB_REPOSITORY:-blocksds/blocksds-packages}"
 INDEX_TABLE_CONTENT=""
 
@@ -24,7 +25,7 @@ for PKGBUILD in $(find . -name "PKGBUILD" | sort); do
 
 		source "${PKGBUILD}"
 		UPDATED=$(git log -1 --format=%cd --date=short -- "${PKGBUILD}")
-		DOWNLOAD_URL="${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.gz"
+		DOWNLOAD_URL="${pkgname}-${pkgver}-${pkgrel}-${arch}.pkg.tar.xz"
 
 		# Convert lists to strings
 		ARCH="${arch[*]}"

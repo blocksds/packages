@@ -18,17 +18,19 @@ permissions:
   packages: write
 
 jobs:
-  build-linux:
+  build_linux:
     name: Build Pacman packages (Linux)
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        #arch: [x86_64, aarch64]
-        arch: [x86_64]
+        arch: [x86_64, aarch64]
+
     steps:
       - name: Clone project
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Alpine Linux
         uses: jirutka/setup-alpine@v1
@@ -36,18 +38,18 @@ jobs:
           branch: v3.20
           arch: ${{ matrix.arch }}
           packages: >
+            bash
             build-base
+            coreutils
+            curl
             fakeroot
             git
-            curl
-            bash
             libarchive-tools
+            patchelf
+            sed
+            sudo
             xz
             zstd
-            sudo
-            coreutils
-            sed
-            patchelf
 
       # This folder needs to be created as root, but regular users need to be
       # able to modify it.
@@ -69,16 +71,28 @@ jobs:
           wf-pacman -Syu --noconfirm wonderful-base runtime-musl-dev
         shell: alpine.sh {0}
 
-      # FIXME: The first launch of fakeroot via wf-makepkg seems to emit a
-      # SIGUSR1 in this environment.  Thankfully, executing it again picks up
-      # right where it left off.
       - name: Build packages
         run: |
           export PATH=/opt/wonderful/bin:$PATH
           export BLOCKSDS=/opt/wonderful/thirdparty/blocksds/core/
           export BLOCKSDSEXT=/opt/wonderful/thirdparty/blocksds/external/
 
-          bash ./build.sh --install --retry
+          export arch=${{ matrix.arch }}
+
+          # FIXME: The first launch of fakeroot via wf-makepkg seems to emit a
+          # SIGUSR1 in this environment. Thankfully, executing it again picks
+          # up right where it left off.
+          bash ./build.sh --retry blocksds-toolchain
+          bash ./install.sh blocksds-toolchain
+
+          # Only build architecture-agnostic packages once
+          if [ "${{ matrix.arch }}" == "x86_64" ]; then
+            bash ./build.sh blocksds-docs
+            bash ./build.sh blocksds-gbajpeg
+            bash ./build.sh blocksds-libdsf
+            bash ./build.sh blocksds-nflib
+            bash ./build.sh blocksds-nitroengine
+          fi
         shell: alpine.sh {0}
 
       - name: Archive artifacts

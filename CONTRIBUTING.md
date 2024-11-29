@@ -40,7 +40,7 @@ For new contributions to be merged, the PKGBUILDs in them should meet the follow
     configs, etc.) it should be set to ``("any")``.
   - ``sha256sums`` should be used for integrity checks of downloaded files. Git
     sources and local patches are allowed to use ``SKIP``.
-  - PKGBUILDs based on versioned archive files (yourlibrary-1.2.tar.gz for
+  - PKGBUILDs based on versioned archive files (yourlibrary-1.2.tar.xz for
     instance) are preferred over those based on git/svn repositories.
   - The license of the library should be installed in the same folder as the
     library itself.
