@@ -12,6 +12,8 @@
 
 set -e
 
+export PATH=/opt/wonderful/bin:$PATH
+
 doretry=""
 if [ "$1" == "--retry" ]; then
     doretry="true"
@@ -31,6 +33,6 @@ echo "Building $pkgdir ..."
 cd $pkgdir
 
 if [ ! -z "$doretry" ]; then
-    wf-makepkg -s --noconfirm || true
+    wf-makepkg -f --noconfirm || true
 fi
-wf-makepkg -s --noconfirm
+wf-makepkg -f --noconfirm

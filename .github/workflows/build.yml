@@ -54,52 +54,66 @@ jobs:
       # This folder needs to be created as root, but regular users need to be
       # able to modify it.
       - name: Create /opt/wonderful folder
+        shell: alpine.sh --root {0}
         run: |
           sudo sh -c "mkdir /opt/wonderful && chown -R runner /opt/wonderful"
-        shell: alpine.sh --root {0}
 
       - name: Install Wonderful
+        shell: alpine.sh {0}
         run: |
           cd /opt/wonderful
           curl https://wonderful.asie.pl/bootstrap/wf-bootstrap-${{ matrix.arch }}.tar.gz | tar xzvf -
-        shell: alpine.sh {0}
 
       - name: Install prerequisites (Wonderful)
+        shell: alpine.sh {0}
         run: |
           export PATH=/opt/wonderful/bin:$PATH
 
-          wf-pacman -Syu --noconfirm wonderful-base runtime-musl-dev
-        shell: alpine.sh {0}
+          wf-pacman -Syu --noconfirm
+          wf-pacman -Syu --noconfirm \
+                wonderful-base \
+                runtime-musl-dev \
+                toolchain-gcc-arm-none-eabi \
+
+          if [ "${{ matrix.arch }}" == "x86_64" ]; then
+            wf-pacman -Syu --noconfirm toolchain-llvm-teak-llvm
+          fi
 
       - name: Build packages
+        shell: alpine.sh {0}
         run: |
-          export PATH=/opt/wonderful/bin:$PATH
-          export BLOCKSDS=/opt/wonderful/thirdparty/blocksds/core/
-          export BLOCKSDSEXT=/opt/wonderful/thirdparty/blocksds/external/
-
-          export arch=${{ matrix.arch }}
-
           # FIXME: The first launch of fakeroot via wf-makepkg seems to emit a
           # SIGUSR1 in this environment. Thankfully, executing it again picks
           # up right where it left off.
-          bash ./build.sh --retry blocksds-toolchain
-          bash ./install.sh blocksds-toolchain
+          bash build.sh --retry blocksds-toolchain
+          bash install.sh blocksds-toolchain
 
           # Only build architecture-agnostic packages once
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
-            bash ./build.sh blocksds-docs
-            bash ./build.sh blocksds-gbajpeg
-            bash ./build.sh blocksds-libdsf
-            bash ./build.sh blocksds-nflib
-            bash ./build.sh blocksds-nitroengine
+            export BLOCKSDS=/opt/wonderful/thirdparty/blocksds/core/
+            export BLOCKSDSEXT=/opt/wonderful/thirdparty/blocksds/external/
+
+            bash build.sh blocksds-docs
+            bash build.sh blocksds-gbajpeg
+            bash build.sh blocksds-libdsf
+            bash build.sh blocksds-nflib
+            bash build.sh blocksds-nitroengine
           fi
-        shell: alpine.sh {0}
+
+          mkdir -p out
+          mv */*.pkg.tar.xz out
+
+          echo "Artifacts:"
+          echo "=========="
+          ls out
 
       - name: Archive artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Pacman packages (Linux, ${{ matrix.arch }})
-          path: ${{ github.workspace }}/*/*.pkg.tar.xz
+          name: packages_linux_${{ matrix.arch }}
+          path: out
+          compression-level: 0
+          if-no-files-found: error
 
   generate_website:
     name: Generate website
@@ -108,8 +122,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        arch: [x86_64]
 
     steps:
       - name: Clone project
@@ -121,7 +133,7 @@ jobs:
         uses: jirutka/setup-alpine@v1
         with:
           branch: v3.20
-          arch: ${{ matrix.arch }}
+          arch: x86_64
           packages: >
             bash
             build-base
@@ -140,54 +152,80 @@ jobs:
       # This folder needs to be created as root, but regular users need to be
       # able to modify it.
       - name: Create /opt/wonderful folder
+        shell: alpine.sh --root {0}
         run: |
           sudo sh -c "mkdir /opt/wonderful && chown -R runner /opt/wonderful"
-        shell: alpine.sh --root {0}
 
       - name: Install Wonderful
+        shell: alpine.sh {0}
         run: |
           cd /opt/wonderful
-          curl https://wonderful.asie.pl/bootstrap/wf-bootstrap-${{ matrix.arch }}.tar.gz | tar xzvf -
-        shell: alpine.sh {0}
+          curl https://wonderful.asie.pl/bootstrap/wf-bootstrap-x86_64.tar.gz | tar xzvf -
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
 
       - name: Create repo files
-        run: |
-          export PATH=/opt/wonderful/bin:$PATH
-
-          tree
-
-          mkdir repo
-          cp -f Pacman*/*/*.pkg.tar.xz repo/
-
-          tree
-
-          #./make-repo-html.sh
-
-          cd repo
-
-          #tree
-
-          wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
-
-          tree
-
-          # Remove symlinks for GitHub pages
-          rm blocksds.db
-          rm blocksds.files
-          cp blocksds.db.tar.xz blocksds.db
-          cp blocksds.files.tar.xz blocksds.files
-
-          tar -cvf ../repo.tar ./*
         shell: alpine.sh {0}
+        run: |
+          tree
+
+          export PATH=/opt/wonderful/bin:$PATH
+          export WONDERFUL_TOOLCHAIN=/opt/wonderful/
+
+          mkdir -p packages/rolling/linux/x86_64/
+          mkdir -p packages/rolling/linux/aarch64/
+
+          # The architecture-agnostic and OS-agnostic packages are only built
+          # in the Linux x86_64 build, so they need to be copied to the other
+          # architectures and OSes.
+
+          cp packages_linux_x86_64/*.pkg.tar.xz packages/rolling/linux/x86_64/
+
+          cp packages_linux_x86_64/*any.pkg.tar.xz packages/rolling/linux/aarch64/
+          cp packages_linux_aarch64/*.pkg.tar.xz packages/rolling/linux/aarch64/
+
+          tree
+
+          # ./make-repo-html.sh
+
+          cd packages/rolling/linux/x86_64/
+
+            wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
+
+            # Remove symlinks for GitHub pages
+            rm blocksds.db
+            rm blocksds.files
+            cp blocksds.db.tar.xz blocksds.db
+            cp blocksds.files.tar.xz blocksds.files
+
+            ls * > index.html
+
+          cd ../../../..
+
+          cd packages/rolling/linux/aarch64/
+
+            wf-repo-add blocksds.db.tar.xz *.pkg.tar.xz
+
+            # Remove symlinks for GitHub pages
+            rm blocksds.db
+            rm blocksds.files
+            cp blocksds.db.tar.xz blocksds.db
+            cp blocksds.files.tar.xz blocksds.files
+
+            ls * > index.html
+
+          cd ../../../..
+
+          # Create tarball with everything to upload to GitHub pages
+          tar -cvf repo.tar packages
 
       - name: Upload repo artifact
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: repo.tar
+          if-no-files-found: error
 
   publish_repo:
     name: Publish website with GitHub pages

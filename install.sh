@@ -2,6 +2,8 @@
 
 set -e
 
+export PATH=/opt/wonderful/bin:$PATH
+
 if [ -z "$1" ]
 then
     echo "Specify a package to install!"
