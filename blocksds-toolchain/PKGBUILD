@@ -3,10 +3,8 @@
 # SPDX-FileContributor: Adrian "asie" Siekierka, 2023, 2024
 # SPDX-FileContributor: Antonio Niño Díaz, 2024
 
-pkgname=(blocksds-toolchain blocksds-docs)
-# Clone the repository into a new folder called "blocksds" so that it can be
-# used by all the packages defined in this file.
-source=("blocksds::git+https://github.com/blocksds/sdk#branch=master")
+pkgname=blocksds-toolchain
+source=("$pkgname::git+https://github.com/blocksds/sdk#branch=master")
 sha256sums=('SKIP')
 groups=(blocksds)
 pkgver=1.6.3
@@ -44,7 +42,7 @@ if [ "$WF_HOST_OS" == "linux" ]; then
 fi
 
 prepare() {
-	cd "blocksds"
+	cd "$pkgname"
 
 	git submodule update --init --recursive
 
@@ -57,13 +55,13 @@ prepare() {
 }
 
 build() {
-	cd "blocksds"
+	cd "$pkgname"
 
 	BLOCKSDS=`pwd` make
 }
 
-package_blocksds-toolchain() {
-	cd "blocksds"
+package() {
+	cd "$pkgname"
 
 	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
 
@@ -75,18 +73,4 @@ package_blocksds-toolchain() {
 			# this will fail on statically-linked grit; consume the error
 			wf_runtime_patchelf "$i" || true
 		done
-}
-
-package_blocksds-docs() {
-	depends=(blocksds-toolchain)
-	optdepends=()
-	replaces=(blocksds-docs blocksds-git-docs)
-
-	cd "blocksds"
-
-	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
-	cp -aR docs "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
-	cp -aR examples "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
-	cp -aR templates "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
-	cp -aR tests "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
 }

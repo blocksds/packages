@@ -1,0 +1,36 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Adrian "asie" Siekierka, 2023, 2024
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
+
+pkgname=blocksds-docs
+source=("$pkgname::git+https://github.com/blocksds/sdk#branch=master")
+groups=(blocksds)
+pkgver=1.6.3
+pkgrel=1
+epoch=
+pkgdesc="Documentation of DS/DSi console homebrew toolchain maintained by AntonioND"
+arch=("any")
+url="https://github.com/blocksds/sdk"
+license=("complex")
+depends=(runtime-musl)
+sha256sums=('SKIP')
+options=('!strip')
+
+prepare() {
+	cd "$pkgname"
+
+	git submodule update --init --recursive
+}
+
+package() {
+	replaces=(blocksds-docs blocksds-git-docs)
+
+	cd "$pkgname"
+
+	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
+	cp -aR docs "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
+	cp -aR examples "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
+	cp -aR templates "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
+	cp -aR tests "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
+}
