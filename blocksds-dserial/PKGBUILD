@@ -27,6 +27,8 @@ build() {
 package() {
 	cd "$pkgname"
 
-	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
+	export BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external
+
 	make -j`nproc` install
+	cp LICENSE $BLOCKSDSEXT/dserial/
 }
