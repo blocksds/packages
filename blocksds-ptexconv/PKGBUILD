@@ -24,6 +24,10 @@ options=('!strip')
 
 . "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
 
+prepare() {
+	wf_disable_host_build
+}
+
 build() {
 	cd "$pkgname"
 
