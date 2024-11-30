@@ -76,7 +76,10 @@ jobs:
                 toolchain-gcc-arm-none-eabi \
 
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
-            wf-pacman -Syu --noconfirm toolchain-llvm-teak-llvm
+            wf-pacman -Syu --noconfirm \
+                  toolchain-llvm-teak-llvm \
+                  toolchain-gcc-arm-none-eabi-libpng16 \
+                  toolchain-gcc-arm-none-eabi-zlib
           fi
 
       - name: Build packages

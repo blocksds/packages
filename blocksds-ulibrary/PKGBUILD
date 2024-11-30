@@ -12,7 +12,11 @@ arch=(any)
 source=("$pkgname::git+https://github.com/AntonioND/ulibrary#branch=master")
 url="https://github.com/AntonioND/ulibrary"
 license=("complex")
-depends=(blocksds-toolchain)
+depends=(
+    blocksds-toolchain
+    toolchain-gcc-arm-none-eabi-libpng16
+    toolchain-gcc-arm-none-eabi-zlib
+)
 sha256sums=('SKIP')
 options=('!strip')
 
