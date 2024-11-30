@@ -57,10 +57,8 @@ GitHub Action in this repo. The repository should already be set up in
 `wf-pacman` like this at the bottom of `/opt/wonderful/etc/pacman.conf`:
 
 ```
-## WIP
-[pspdev]
-SigLevel = Optional TrustAll
-Server = https://pspdev.github.io/psp-packages/
+[blocksds]
+Server = https://blocksds.skylyrac.net/packages/rolling/linux/$arch/
 ```
 
 For forks or alternative repos, pspdev in the url in the `Server` setting should
