@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Adrian "asie" Siekierka, 2023
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
+
+pkgname=blocksds-dserial
+groups=(blocksds-extra)
+pkgver=`date "+%Y%m%d"`
+pkgrel=1
+epoch=
+pkgdesc="DSerial hardware library"
+arch=(any)
+source=("$pkgname::git+https://github.com/asiekierka/dserial#branch=main")
+url="https://github.com/asiekierka/dserial"
+license=("BSD-3-Clause")
+depends=(blocksds-toolchain)
+sha256sums=('SKIP')
+options=('!strip')
+replaces=(thirdparty-blocksds-dserial)
+
+build() {
+	cd "$pkgname"
+
+	make
+}
+
+package() {
+	cd "$pkgname"
+
+	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
+	make -j`nproc` install
+}

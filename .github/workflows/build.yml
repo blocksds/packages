@@ -92,6 +92,7 @@ jobs:
             export BLOCKSDS=/opt/wonderful/thirdparty/blocksds/core/
             export BLOCKSDSEXT=/opt/wonderful/thirdparty/blocksds/external/
 
+            bash build.sh blocksds-dserial
             bash build.sh blocksds-docs
             bash build.sh blocksds-gbajpeg
             bash build.sh blocksds-libdsf
