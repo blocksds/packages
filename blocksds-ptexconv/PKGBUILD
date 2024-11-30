@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
+
+pkgname=blocksds-ptexconv
+groups=(blocksds-extra)
+pkgver=`date "+%Y%m%d"`
+pkgrel=1
+epoch=
+pkgdesc="Tool to convert graphics to formats used by the Nintendo DS"
+arch=("x86_64" "aarch64")
+source=("$pkgname::git+https://github.com/blocksds/ptexconv#branch=main")
+url="https://github.com/blocksds/sdk"
+license=("BSD-2-Clause")
+sha256sums=('SKIP')
+depends=(
+	runtime-gcc-libs
+	runtime-musl
+)
+makedepends=(
+	runtime-musl-dev
+)
+options=('!strip')
+
+. "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
+
+build() {
+	cd "$pkgname"
+
+	make -j`nproc`
+}
+
+package() {
+	cd "$pkgname"
+
+	INSTALLDIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/ptexconv \
+	make -j`nproc` install
+}
