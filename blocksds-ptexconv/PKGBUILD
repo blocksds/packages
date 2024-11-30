@@ -24,12 +24,10 @@ options=('!strip')
 
 . "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
 
-prepare() {
-	wf_disable_host_build
-}
-
 build() {
 	cd "$pkgname"
+
+	sed -i -e 's/ifdef _WIN32/if 0/' src/main.c
 
 	make -j`nproc`
 }

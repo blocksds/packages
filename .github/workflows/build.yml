@@ -86,7 +86,7 @@ jobs:
         shell: alpine.sh {0}
         run: |
           bash build.sh blocksds-toolchain
-          #bash build.sh blocksds-ptexconv
+          bash build.sh blocksds-ptexconv
 
           # Only build architecture-agnostic packages once
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
@@ -186,7 +186,7 @@ jobs:
         shell: msys2 {0}
         run: |
           bash build.sh blocksds-toolchain
-          #bash build.sh blocksds-ptexconv
+          bash build.sh blocksds-ptexconv
 
           mkdir -p out
           mv */*.pkg.tar.xz out
