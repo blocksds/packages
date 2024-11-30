@@ -21,7 +21,7 @@ replaces=(thirdparty-blocksds-nflib)
 build() {
 	cd "$pkgname"
 
-	make -f Makefile
+	make -j`nproc`
 }
 
 package() {

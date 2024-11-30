@@ -21,7 +21,7 @@ replaces=(thirdparty-blocksds-libdsf)
 build() {
 	cd "$pkgname"
 
-	make
+	make -j`nproc`
 }
 
 package() {
