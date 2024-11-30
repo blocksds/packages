@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2024
+
+pkgname=blocksds-dsmi
+groups=(blocksds-extra)
+pkgver=`date "+%Y%m%d"`
+pkgrel=1
+epoch=
+pkgdesc="DSerial hardware library"
+arch=(any)
+source=("$pkgname::git+https://github.com/asiekierka/dsmi#branch=master")
+url="https://github.com/asiekierka/dsmi"
+license=("complex")
+depends=(blocksds-toolchain blocksds-dserial)
+sha256sums=('SKIP')
+options=('!strip')
+
+prepare() {
+	cd "$pkgname"
+
+	git submodule update --init --recursive
+}
+
+build() {
+	cd "$pkgname/ds/libdsmi"
+
+	make -j`nproc` -f Makefile.blocks
+}
+
+package() {
+	cd "$pkgname/ds/libdsmi"
+
+	export BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external
+
+	make -j`nproc` -f Makefile.blocks install
+
+	cp lgpl.txt $BLOCKSDSEXT/dsmi
+}
