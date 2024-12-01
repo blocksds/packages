@@ -4,11 +4,11 @@
 # SPDX-FileContributor: Antonio Niño Díaz, 2024
 
 pkgname=blocksds-docs
-source=("$pkgname::git+https://github.com/blocksds/sdk#branch=master")
 groups=(blocksds-default)
 pkgver=1.6.3
 pkgrel=1
 epoch=
+source=("https://github.com/blocksds/sdk/archive/refs/tags/v$pkgver.zip")
 pkgdesc="Documentation of DS/DSi console homebrew toolchain maintained by AntonioND"
 arch=("any")
 url="https://github.com/blocksds/sdk"
@@ -19,16 +19,10 @@ options=('!strip')
 replaces=(thirdparty-blocksds-docs)
 conflicts=(thirdparty-blocksds-docs)
 
-prepare() {
-	cd "$pkgname"
-
-	git submodule update --init --recursive
-}
-
 package() {
 	replaces=(blocksds-docs blocksds-git-docs)
 
-	cd "$pkgname"
+	cd "sdk-$pkgver"
 
 	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
 	cp -aR docs "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core || true
