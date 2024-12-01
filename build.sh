@@ -1,7 +1,6 @@
 #!/bin/bash
 # build.sh by davidgfnet
 
-
 set -e
 
 export PATH=/opt/wonderful/bin:$PATH

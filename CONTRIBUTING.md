@@ -34,10 +34,11 @@ For new contributions to be merged, the PKGBUILDs in them should meet the follow
   - The following fields should be set:
     - ``pkgdesc``
     - ``license``
-  - ``arch`` should be set to ``("any")`` if the package contains Nintendo DS
-    code. It should be set to ``("x86_64" "aarch64")`` if it contains tools for
-    the host. Otherwise (only headers, scripts, makefiles, documentation,
-    configs, etc.) it should be set to ``("any")``.
+  - ``arch`` should be set to ``("any")`` if the package only contains Nintendo
+    DS code and no host code (like in the case of a library). It should be set
+    to ``("x86_64" "aarch64")`` if it contains host code (like in the case of a
+    graphics converter). If it only contains headers, scripts, makefiles,
+    documentation, configs, etc, it should be set to ``("any")``.
   - ``sha256sums`` should be used for integrity checks of downloaded files. Git
     sources and local patches are allowed to use ``SKIP``.
   - PKGBUILDs based on versioned archive files (yourlibrary-1.2.tar.xz for

@@ -1,6 +1,6 @@
 # BlocksDS Packages
 
-This repo contains build files for all the libraries shipped with BLocksDS. They
+This repo contains build files for all the libraries shipped with BlocksDS. They
 are automatically build and hosted as a pacman repository using Github actions.
 They can be downloaded with the ``wf-pacman`` command.
 
@@ -38,17 +38,21 @@ To update the packages, run:
 wf-pacman -Syu
 ```
 
-## Building individual libraries
+## Building individual packages
 
 Building a single package from a clone of this repository can be useful if you
 wish to modify it in some way. It can be done by opening a terminal in the
-directory of the chosen library and running the following:
+directory of the chosen library and running the following to build the package:
 
 ```
-wf-makepkg -i
+wf-makepkg
 ```
 
-This will build and install the package.
+This will install a package after building it:
+
+```
+wf-pacman -U name-of-the-package.pkg.tar.xz
+```
 
 ## Pacman Repository Hosting
 
