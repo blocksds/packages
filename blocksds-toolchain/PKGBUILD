@@ -4,12 +4,12 @@
 # SPDX-FileContributor: Antonio Niño Díaz, 2024
 
 pkgname=blocksds-toolchain
-source=("$pkgname::git+https://github.com/blocksds/sdk#branch=master")
 sha256sums=('SKIP')
 groups=(blocksds-default)
 pkgver=1.6.3
 pkgrel=1
 epoch=
+source=("$pkgname::git+https://github.com/blocksds/sdk#tag=v$pkgver")
 pkgdesc="DS/DSi console homebrew toolchain maintained by AntonioND"
 arch=("x86_64" "aarch64")
 url="https://github.com/blocksds/sdk"
