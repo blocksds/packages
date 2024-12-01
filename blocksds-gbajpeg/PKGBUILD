@@ -5,12 +5,13 @@
 
 pkgname=blocksds-gbajpeg
 groups=(blocksds-extra)
-pkgver=`date "+%Y%m%d"`
+# Date when this version of the package was released
+pkgver=20241201
 pkgrel=1
 epoch=
 pkgdesc="Lightweight GBA/NDS-optimized JPEG decoder"
 arch=(any)
-source=("$pkgname::git+https://github.com/blocksds/gbajpeg#branch=master")
+source=("$pkgname::git+https://github.com/blocksds/gbajpeg#commit=2c2133fabe9c")
 url="https://github.com/blocksds/gbajpeg"
 license=("PD")
 depends=(blocksds-toolchain)
