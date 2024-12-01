@@ -17,6 +17,7 @@ depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
 replaces=(thirdparty-blocksds-dserial)
+conflicts=(thirdparty-blocksds-dserial)
 
 build() {
 	cd "$pkgname"

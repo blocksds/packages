@@ -17,6 +17,7 @@ depends=()
 sha256sums=('SKIP')
 options=('!strip')
 replaces=(thirdparty-blocksds-docs)
+conflicts=(thirdparty-blocksds-docs)
 
 prepare() {
 	cd "$pkgname"

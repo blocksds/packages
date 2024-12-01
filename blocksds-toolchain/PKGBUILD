@@ -35,6 +35,10 @@ replaces=(
 	blocksds-toolchain
 	blocksds-git-toolchain
 )
+conflicts=(
+	thirdparty-blocksds-toolchain
+	thirdparty-blocksds-git-toolchain
+)
 options=('!strip')
 
 . "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"

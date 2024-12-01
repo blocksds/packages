@@ -17,6 +17,7 @@ depends=(blocksds-toolchain)
 sha256sums=('SKIP')
 options=('!strip')
 replaces=(thirdparty-blocksds-nitroengine)
+conflicts=(thirdparty-blocksds-nitroengine)
 
 build() {
 	cd "$pkgname"
