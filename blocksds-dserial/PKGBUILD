@@ -5,7 +5,8 @@
 
 pkgname=blocksds-dserial
 groups=(blocksds-extra)
-pkgver=`date "+%Y%m%d"`
+# Date when this version of the package was released
+pkgver=20241201
 pkgrel=1
 epoch=
 pkgdesc="DSerial hardware library"
@@ -18,6 +19,12 @@ sha256sums=('SKIP')
 options=('!strip')
 replaces=(thirdparty-blocksds-dserial)
 conflicts=(thirdparty-blocksds-dserial)
+
+prepare() {
+	cd "$pkgname"
+
+	git checkout 360d7979446f
+}
 
 build() {
 	cd "$pkgname"
