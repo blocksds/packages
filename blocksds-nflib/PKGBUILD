@@ -5,12 +5,12 @@
 
 pkgname=blocksds-nflib
 groups=(blocksds-extra)
-pkgver=`date "+%Y%m%d"`
+pkgver=1.1.5
 pkgrel=1
 epoch=
 pkgdesc="NightFox's library written in C to make it easier to develop for the NDS"
 arch=(any)
-source=("$pkgname::git+https://github.com/knightfox75/nds_nflib#branch=master")
+source=("https://github.com/knightfox75/nds_nflib/archive/refs/tags/v$pkgver.zip")
 url="https://github.com/knightfox75/nds_nflib"
 license=("MIT")
 depends=(blocksds-toolchain)
@@ -20,13 +20,13 @@ replaces=(thirdparty-blocksds-nflib)
 conflicts=(thirdparty-blocksds-nflib)
 
 build() {
-	cd "$pkgname"
+	cd "nds_nflib-$pkgver"
 
 	make -j`nproc`
 }
 
 package() {
-	cd "$pkgname"
+	cd "nds_nflib-$pkgver"
 
 	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external \
 	make -j`nproc` install
