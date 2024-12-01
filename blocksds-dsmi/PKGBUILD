@@ -4,12 +4,13 @@
 
 pkgname=blocksds-dsmi
 groups=(blocksds-extra)
-pkgver=`date "+%Y%m%d"`
+# Date when this version of the package was released
+pkgver=20241201
 pkgrel=1
 epoch=
 pkgdesc="DSerial hardware library"
 arch=(any)
-source=("$pkgname::git+https://github.com/asiekierka/dsmi#branch=master")
+source=("$pkgname::git+https://github.com/asiekierka/dsmi#commit=ae212b07e180")
 url="https://github.com/asiekierka/dsmi"
 license=("complex")
 depends=(blocksds-toolchain blocksds-dserial)
