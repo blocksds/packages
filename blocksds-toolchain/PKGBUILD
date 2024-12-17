@@ -10,7 +10,7 @@ pkgver=1.6.3
 pkgrel=1
 epoch=
 source=("$pkgname::git+https://github.com/blocksds/sdk#tag=v$pkgver")
-pkgdesc="DS/DSi console homebrew toolchain maintained by AntonioND"
+pkgdesc="Nintendo DS/DSi homebrew toolchain"
 arch=("x86_64" "aarch64")
 url="https://github.com/blocksds/sdk"
 license=("complex")
@@ -43,7 +43,7 @@ options=('!strip')
 
 if [ "$WF_HOST_OS" == "linux" ]; then
 	if [ "$CARCH" == "x86_64" ]; then
-		makedepends+=(toolchain-llvm-teak-llvm )
+		makedepends+=(toolchain-llvm-teak-llvm)
 		optdepends+=('toolchain-llvm-teak-llvm: Teak DSP build support')
 	fi
 fi
