@@ -32,8 +32,6 @@ optdepends=(
 replaces=(
 	thirdparty-blocksds-toolchain
 	thirdparty-blocksds-git-toolchain
-	blocksds-toolchain
-	blocksds-git-toolchain
 )
 conflicts=(
 	thirdparty-blocksds-toolchain
