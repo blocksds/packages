@@ -16,12 +16,16 @@ license=("complex")
 depends=()
 sha256sums=('SKIP')
 options=('!strip')
-replaces=(thirdparty-blocksds-docs)
-conflicts=(thirdparty-blocksds-docs)
+replaces=(
+	thirdparty-blocksds-docs
+	thirdparty-blocksds-git-docs
+)
+conflicts=(
+	thirdparty-blocksds-docs
+	thirdparty-blocksds-git-docs
+)
 
 package() {
-	replaces=(blocksds-docs blocksds-git-docs)
-
 	cd "sdk-$pkgver"
 
 	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
