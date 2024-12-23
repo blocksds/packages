@@ -80,3 +80,8 @@ A special thanks goes out to both the contributors of PSPDEV and the VITASDK.
 Most of the scripts in this repository are based on scripts written by them.
 
 https://github.com/pspdev/psp-packages/
+
+The initial PKGBUILD files used by BlocksDS packages were obtained from the
+Wonderful Toolchain packages repository:
+
+https://github.com/WonderfulToolchain/wonderful-packages
