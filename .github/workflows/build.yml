@@ -75,9 +75,11 @@ jobs:
           export PATH=/opt/wonderful/bin:$PATH
 
           wf-pacman -Syu --noconfirm
+          wf-pacman -Syu --noconfirm
+
           wf-pacman -Syu --noconfirm \
                 runtime-musl-dev \
-                toolchain-gcc-arm-none-eabi \
+                toolchain-gcc-arm-none-eabi
 
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
             wf-pacman -Syu --noconfirm \
@@ -173,8 +175,9 @@ jobs:
           export WONDERFUL_TOOLCHAIN=/opt/wonderful/
 
           wf-pacman -Syu --noconfirm
+          wf-pacman -Syu --noconfirm
+
           wf-pacman -Syu --noconfirm \
-                wf-pacman \
                 runtime-gcc-libs \
                 toolchain-gcc-arm-none-eabi
 
