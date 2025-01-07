@@ -76,7 +76,6 @@ jobs:
 
           wf-pacman -Syu --noconfirm
           wf-pacman -Syu --noconfirm \
-                wonderful-base \
                 runtime-musl-dev \
                 toolchain-gcc-arm-none-eabi \
 
@@ -175,7 +174,6 @@ jobs:
 
           wf-pacman -Syu --noconfirm
           wf-pacman -Syu --noconfirm \
-                wonderful-base \
                 wf-pacman \
                 runtime-gcc-libs \
                 toolchain-gcc-arm-none-eabi
