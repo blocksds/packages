@@ -1,0 +1,25 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2025
+
+pkgname=blocksds-palib
+groups=(blocksds-extra)
+pkgver=250114
+pkgrel=1
+epoch=
+pkgdesc="Library to make 2D applications with for the NDS."
+arch=(any)
+source=("$pkgname::git+https://github.com/AntonioND/palib#tag=v$pkgver")
+url="https://github.com/AntonioND/palib"
+license=("complex")
+depends=(blocksds-toolchain)
+sha256sums=('SKIP')
+options=('!strip')
+
+package() {
+	cd "$pkgname"
+
+	export BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external
+
+	make -j`nproc` install
+}

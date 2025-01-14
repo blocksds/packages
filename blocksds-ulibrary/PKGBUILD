@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: CC0-1.0
 #
-# SPDX-FileContributor: Antonio Niño Díaz, 2024
+# SPDX-FileContributor: Antonio Niño Díaz, 2024-2025
 
 pkgname=blocksds-ulibrary
 groups=(blocksds-extra)
@@ -16,6 +16,9 @@ depends=(
     blocksds-toolchain
     toolchain-gcc-arm-none-eabi-libpng16
     toolchain-gcc-arm-none-eabi-zlib
+)
+optdepends=(
+	'blocksds-palib: 2D GPU graphics support'
 )
 sha256sums=('SKIP')
 options=('!strip')
