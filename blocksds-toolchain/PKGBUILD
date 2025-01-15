@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: CC0-1.0
 #
-# SPDX-FileContributor: Adrian "asie" Siekierka, 2023, 2024
+# SPDX-FileContributor: Adrian "asie" Siekierka, 2023-2024
 # SPDX-FileContributor: Antonio Niño Díaz, 2024
 
 pkgname=blocksds-toolchain
 sha256sums=('SKIP')
 groups=(blocksds-default)
-pkgver=1.7.2
+pkgver=1.7.3
 pkgrel=1
 epoch=
 source=("$pkgname::git+https://github.com/blocksds/sdk#tag=v$pkgver")
