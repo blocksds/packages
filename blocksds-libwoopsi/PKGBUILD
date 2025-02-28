@@ -5,7 +5,7 @@
 pkgname=blocksds-libwoopsi
 groups=(blocksds-extra)
 # Date when this version of the package was released
-pkgver=20241201
+pkgver=20250228
 pkgrel=1
 epoch=
 pkgdesc="Library to make GUI applications for the NDS."
