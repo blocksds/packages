@@ -1,17 +1,17 @@
 # SPDX-License-Identifier: CC0-1.0
 #
-# SPDX-FileContributor: Antonio Niño Díaz, 2024
+# SPDX-FileContributor: Antonio Niño Díaz, 2024-2025
 
 pkgname=blocksds-libwoopsi
 groups=(blocksds-extra)
 # Date when this version of the package was released
-pkgver=20250228
+pkgver=20250302
 pkgrel=1
 epoch=
 pkgdesc="Library to make GUI applications for the NDS."
 arch=(any)
 # The git repository is very big, download a zip file instead.
-source=("https://github.com/AntonioND/Woopsi/archive/refs/tags/v20241201.zip")
+source=("https://github.com/AntonioND/Woopsi/archive/refs/tags/v$pkgver.zip")
 url="https://github.com/AntonioND/Woopsi"
 license=("BSD-3-Clause")
 depends=(blocksds-toolchain)
@@ -19,13 +19,13 @@ sha256sums=('SKIP')
 options=('!strip')
 
 build() {
-	cd "Woopsi-20241201/Woopsi/libwoopsi"
+	cd "Woopsi-$pkgver/Woopsi/libwoopsi"
 
 	make -j`nproc` -f Makefile.blocksds
 }
 
 package() {
-	cd "Woopsi-20241201/Woopsi/libwoopsi"
+	cd "Woopsi-$pkgver/Woopsi/libwoopsi"
 
 	export BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external
 
