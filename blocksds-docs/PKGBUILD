@@ -5,7 +5,7 @@
 
 pkgname=blocksds-docs
 groups=(blocksds-default)
-pkgver=1.10.1
+pkgver=1.11.0
 pkgrel=1
 epoch=
 source=("https://github.com/blocksds/sdk/archive/refs/tags/v$pkgver.zip")
