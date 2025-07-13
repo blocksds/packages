@@ -4,8 +4,8 @@
 
 pkgname=blocksds-ptexconv
 groups=(blocksds-extra)
-pkgver=1.5.0.1
-pkgrel=2
+pkgver=1.5.1.0
+pkgrel=1
 epoch=
 pkgdesc="Tool to convert graphics to formats used by the Nintendo DS"
 arch=("x86_64" "aarch64")
