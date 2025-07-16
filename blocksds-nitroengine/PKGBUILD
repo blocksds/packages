@@ -5,7 +5,7 @@
 
 pkgname=blocksds-nitroengine
 groups=(blocksds-extra)
-pkgver=0.15.3
+pkgver=0.15.4
 pkgrel=1
 epoch=
 pkgdesc="AntonioND's library providing functions designed to simplify the process of making a 3D game"
