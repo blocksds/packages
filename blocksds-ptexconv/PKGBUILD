@@ -5,7 +5,7 @@
 pkgname=blocksds-ptexconv
 groups=(blocksds-extra)
 pkgver=1.5.1.0_1
-pkgrel=1
+pkgrel=2
 epoch=
 pkgdesc="Tool to convert graphics to formats used by the Nintendo DS"
 arch=("x86_64" "aarch64")
@@ -35,7 +35,9 @@ build() {
 package() {
 	cd "$pkgname"
 
-	INSTALLDIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/ptexconv \
-	LDFLAGS="$WF_RUNTIME_LDFLAGS" \
+	export INSTALLDIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/ptexconv
+
 	make -j`nproc` install
+
+	wf_runtime_patchelf $INSTALLDIR/ptexconv
 }
