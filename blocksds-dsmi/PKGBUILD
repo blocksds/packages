@@ -26,6 +26,8 @@ prepare() {
 build() {
 	cd "$pkgname/ds/libdsmi"
 
+	sed -i -e 's/ -DDSMI_SUPPORT_WIFI//' Makefile.blocks
+
 	make -j`nproc` -f Makefile.blocks
 }
 
