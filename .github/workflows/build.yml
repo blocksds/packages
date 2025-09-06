@@ -106,7 +106,7 @@ jobs:
             bash install.sh blocksds-dserial # Required by blocksds-dsmi
 
             bash build.sh blocksds-docs
-            #bash build.sh blocksds-dsmi TODO: Re-enable
+            bash build.sh blocksds-dsmi
             bash build.sh blocksds-gbajpeg
             bash build.sh blocksds-libdsf
             bash build.sh blocksds-libwoopsi

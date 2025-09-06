@@ -5,12 +5,12 @@
 pkgname=blocksds-dsmi
 groups=(blocksds-extra)
 # Date when this version of the package was released
-pkgver=20250820
+pkgver=20250907
 pkgrel=1
 epoch=
 pkgdesc="DSerial hardware library"
 arch=(any)
-source=("$pkgname::git+https://github.com/asiekierka/dsmi#commit=b63bb5886ddc")
+source=("$pkgname::git+https://github.com/asiekierka/dsmi#commit=602691a8faae")
 url="https://github.com/asiekierka/dsmi"
 license=("complex")
 depends=(blocksds-toolchain blocksds-dserial)
@@ -25,8 +25,6 @@ prepare() {
 
 build() {
 	cd "$pkgname/ds/libdsmi"
-
-	sed -i -e 's/ -DDSMI_SUPPORT_WIFI//' Makefile.blocks
 
 	make -j`nproc` -f Makefile.blocks
 }
