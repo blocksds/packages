@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2025
+
+pkgname=blocksds-mbedtls
+groups=(blocksds-extra)
+pkgver=3.6.4
+pkgrel=1
+epoch=
+pkgdesc="C library that implements cryptographic primitives, X.509 certificate manipulation and the SSL/TLS and DTLS protocols."
+arch=(any)
+source=(
+    "mbedtls-${pkgver}.tar.gz::https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-${pkgver}/mbedtls-${pkgver}-easy-make-lib.tar.bz2"
+    "mbedtls-${pkgver}.patch"
+)
+url="https://github.com/Mbed-TLS/mbedtls"
+license=("MIT")
+depends=(blocksds-toolchain)
+sha256sums=(
+    '40d83e4040c3e548a61f6ac19b697b0380149abafd6923196a70b6067b543261'
+    'SKIP'
+)
+options=('!strip')
+
+build() {
+	cd "mbedtls-${pkgver}"
+
+	patch -p1 < "${srcdir}/mbedtls-${pkgver}.patch"
+
+	export WONDERFUL_TOOLCHAIN="/opt/wonderful"
+	export ARM_NONE_EABI_PATH="${WONDERFUL_TOOLCHAIN}/toolchain/gcc-arm-none-eabi/bin/"
+	export BLOCKSDS="${WONDERFUL_TOOLCHAIN}/thirdparty/blocksds/core"
+
+	make lib -j`nproc` \
+		CC=${ARM_NONE_EABI_PATH}/arm-none-eabi-gcc AR=${ARM_NONE_EABI_PATH}/arm-none-eabi-ar \
+		CFLAGS="-O2 -I${BLOCKSDS}/libs/libnds/include/ -I${BLOCKSDS}/libs/dswifi/include/ -D__unix__"
+}
+
+package() {
+	cd "mbedtls-$pkgver"
+
+	BLOCKSDSEXT="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external
+
+	INSTALLDIR=${BLOCKSDSEXT}/mbedtls
+
+	mkdir -p ${INSTALLDIR}/include
+	cp -r include/mbedtls ${INSTALLDIR}/include
+	cp -r include/psa ${INSTALLDIR}/include
+
+	mkdir -p ${INSTALLDIR}/lib
+	cp library/*.a ${INSTALLDIR}/lib
+
+	cp LICENSE ${INSTALLDIR}
+}

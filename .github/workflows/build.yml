@@ -111,6 +111,7 @@ jobs:
             bash build.sh blocksds-libdsf
             bash build.sh blocksds-libwoopsi
             bash build.sh blocksds-palib
+            bash build.sh blocksds-mbedtls
             bash build.sh blocksds-nflib
             bash build.sh blocksds-nitroengine
             bash build.sh blocksds-ulibrary
