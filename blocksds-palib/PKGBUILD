@@ -4,7 +4,7 @@
 
 pkgname=blocksds-palib
 groups=(blocksds-extra)
-pkgver=250711
+pkgver=251007
 pkgrel=1
 epoch=
 pkgdesc="Library to make 2D applications with for the NDS."
