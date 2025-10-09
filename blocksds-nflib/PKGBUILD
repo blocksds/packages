@@ -5,7 +5,7 @@
 
 pkgname=blocksds-nflib
 groups=(blocksds-extra)
-pkgver=1.1.11
+pkgver=1.1.12
 pkgrel=1
 epoch=
 pkgdesc="NightFox's library written in C to make it easier to develop for the NDS"
