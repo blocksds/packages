@@ -5,7 +5,7 @@
 pkgname=blocksds-mbedtls
 groups=(blocksds-extra)
 pkgver=3.6.4
-pkgrel=1
+pkgrel=2
 epoch=
 pkgdesc="C library that implements cryptographic primitives, X.509 certificate manipulation and the SSL/TLS and DTLS protocols."
 arch=(any)

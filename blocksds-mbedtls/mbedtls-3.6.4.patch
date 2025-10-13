@@ -39,7 +39,7 @@ index d283136..4e31b2b 100644
  /**
   * \def MBEDTLS_VERSION_C
 diff --git a/library/entropy.c b/library/entropy.c
-index 7dcf067..e93b62c 100644
+index 7dcf067..76c4429 100644
 --- a/library/entropy.c
 +++ b/library/entropy.c
 @@ -24,6 +24,20 @@
@@ -51,10 +51,10 @@ index 7dcf067..e93b62c 100644
 +{
 +    (void)data;
 +
-+    // TODO: This is a terrible implementation of this function, but it will do
-+    // for initial testing of Mbed TLS.
++    uint32_t Wifi_Random(void); // Internal function of DSWiFi
++
 +    for (size_t i = 0; i < len; i++)
-+        output[i] = rand();
++        output[i] = Wifi_Random();
 +    *olen = len;
 +
 +    return 0;
@@ -63,14 +63,6 @@ index 7dcf067..e93b62c 100644
  void mbedtls_entropy_init(mbedtls_entropy_context *ctx)
  {
      ctx->source_count = 0;
-@@ -520,7 +534,6 @@ static int mbedtls_entropy_source_self_test_gather(unsigned char *buf, size_t bu
-     return ret;
- }
- 
--
- static int mbedtls_entropy_source_self_test_check_bits(const unsigned char *buf,
-                                                        size_t buf_len)
- {
 diff --git a/library/platform_util.c b/library/platform_util.c
 index 19ef07a..a607c03 100644
 --- a/library/platform_util.c
