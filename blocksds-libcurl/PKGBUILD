@@ -1,0 +1,73 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2024-2025
+
+pkgname=blocksds-libcurl
+groups=(blocksds-extra)
+pkgver=8.16.0
+pkgrel=1
+epoch=
+pkgdesc="libcurl - your network transfer library"
+arch=(any)
+url="https://github.com/curl/curl"
+license=("complex")
+depends=(
+    blocksds-toolchain
+    blocksds-mbedtls
+    toolchain-gcc-arm-none-eabi-zlib
+)
+options=('!strip')
+
+. "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
+
+prepare() {
+	git clone --depth=1 https://github.com/curl/curl -b curl-8_16_0 $pkgname
+}
+
+build() {
+	cd "$pkgname"
+
+	export BLOCKSDS=/opt/blocksds/core
+	export BLOCKSDSEXT=/opt/blocksds/external
+	export WONDERFUL_TOOLCHAIN=/opt/wonderful
+
+	export INSTALL_DIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/libcurl
+
+	cmake -B build \
+		-DBUILD_CURL_EXE=OFF \
+			-DBUILD_SHARED_LIBS=OFF \
+			-DBUILD_STATIC_LIBS=ON \
+			-DBUILD_STATIC_CURL=ON \
+			-DBUILD_LIBCURL_DOCS=OFF \
+			-DENABLE_CURL_MANUAL=OFF \
+			-DBUILD_MISC_DOCS=OFF \
+		-DCURL_DISABLE_INSTALL=OFF \
+			-DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+		-DCMAKE_TOOLCHAIN_FILE=${BLOCKSDS}/cmake/BlocksDS.cmake \
+			-DCMAKE_REQUIRED_INCLUDES="${BLOCKSDS}/libs/dswifi/include;${BLOCKSDS}/libs/libnds/include" \
+			-DCMAKE_REQUIRED_LIBRARIES="-ldswifi9" \
+		-DCURL_USE_MBEDTLS=ON \
+			-DMBEDTLS_INCLUDE_DIR=${BLOCKSDSEXT}/mbedtls/include \
+			-DMBEDTLS_LIBRARY_DIRS=${BLOCKSDSEXT}/mbedtls/lib \
+			-DMBEDTLS_LIBRARY=${BLOCKSDSEXT}/mbedtls/lib/libmbedtls.a \
+			-DMBEDX509_LIBRARY=${BLOCKSDSEXT}/mbedtls/lib/libmbedx509.a \
+			-DMBEDCRYPTO_LIBRARY=${BLOCKSDSEXT}/mbedtls/lib/libmbedcrypto.a \
+		-DCURL_USE_LIBPSL=OFF \
+		-DENABLE_THREADED_RESOLVER=OFF \
+		-DHAVE_STDATOMIC_H=OFF
+
+	make -C build -j`nproc`
+}
+
+package() {
+	cd "$pkgname"
+
+	make -C build install
+
+	export INSTALL_DIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/libcurl
+
+	rm -rf ${INSTALL_DIR}/bin
+	rm -rf ${INSTALL_DIR}/lib/pkgconfig
+
+	cp COPYING ${INSTALL_DIR}
+}
