@@ -9,7 +9,7 @@ pkgrel=1
 epoch=
 pkgdesc="libcurl - your network transfer library"
 arch=(any)
-url="https://github.com/curl/curl"
+url="https://curl.haxx.se/"
 license=("complex")
 depends=(
     blocksds-toolchain
@@ -27,9 +27,9 @@ prepare() {
 build() {
 	cd "$pkgname"
 
-	export BLOCKSDS=/opt/blocksds/core
-	export BLOCKSDSEXT=/opt/blocksds/external
-	export WONDERFUL_TOOLCHAIN=/opt/wonderful
+	export WONDERFUL_TOOLCHAIN="/opt/wonderful"
+	export BLOCKSDS="${WONDERFUL_TOOLCHAIN}/thirdparty/blocksds/core"
+	export BLOCKSDSEXT="${WONDERFUL_TOOLCHAIN}/thirdparty/blocksds/external"
 
 	export INSTALL_DIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/libcurl
 
