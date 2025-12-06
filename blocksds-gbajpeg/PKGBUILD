@@ -12,7 +12,7 @@ epoch=
 pkgdesc="Lightweight GBA/NDS-optimized JPEG decoder"
 arch=(any)
 source=("$pkgname::git+https://github.com/blocksds/gbajpeg#commit=2c2133fabe9c")
-url="https://github.com/blocksds/gbajpeg"
+url="https://codeberg.org/blocksds/gbajpeg"
 license=("PD")
 depends=(blocksds-toolchain)
 sha256sums=('SKIP')
