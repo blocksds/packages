@@ -9,8 +9,8 @@ pkgrel=1
 epoch=
 pkgdesc="Library to make 2D applications with for the NDS."
 arch=(any)
-source=("$pkgname::git+https://github.com/AntonioND/palib#tag=v$pkgver")
-url="https://github.com/AntonioND/palib"
+source=("$pkgname::git+https://codeberg.org/SkyLyrac/palib#tag=v$pkgver")
+url="https://codeberg.org/SkyLyrac/palib"
 license=("complex")
 depends=(blocksds-toolchain)
 sha256sums=('SKIP')

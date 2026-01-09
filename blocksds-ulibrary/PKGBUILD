@@ -9,8 +9,8 @@ pkgrel=1
 epoch=
 pkgdesc="Library to make 2D applications with the 3D GPU of the NDS."
 arch=(any)
-source=("$pkgname::git+https://github.com/AntonioND/ulibrary#tag=v$pkgver")
-url="https://github.com/AntonioND/ulibrary"
+source=("$pkgname::git+https://codeberg.org/blocksds/ulibrary#tag=v$pkgver")
+url="https://codeberg.org/blocksds/ulibrary"
 license=("complex")
 depends=(
     blocksds-toolchain
