@@ -9,8 +9,8 @@ pkgrel=1
 epoch=
 pkgdesc="Tool to convert graphics to formats used by the Nintendo DS"
 arch=("x86_64" "aarch64")
-source=("$pkgname::git+https://github.com/blocksds/ptexconv#tag=v$pkgver")
-url="https://github.com/blocksds/sdk"
+source=("$pkgname::git+https://codeberg.org/blocksds/ptexconv#tag=v$pkgver")
+url="https://github.com/Garhoogin/ptexconv"
 license=("BSD-2-Clause")
 sha256sums=('SKIP')
 depends=(
