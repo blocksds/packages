@@ -9,10 +9,10 @@ groups=(blocksds-default)
 pkgver=1.16.0
 pkgrel=1
 epoch=
-source=("$pkgname::git+https://github.com/blocksds/sdk#tag=v$pkgver")
+source=("$pkgname::git+https://codeberg.org/blocksds/sdk#tag=v$pkgver")
 pkgdesc="Nintendo DS/DSi homebrew toolchain"
 arch=("x86_64" "aarch64")
-url="https://github.com/blocksds/sdk"
+url="https://codeberg.org/blocksds/sdk"
 license=("complex")
 depends=(
 	runtime-gcc-libs
