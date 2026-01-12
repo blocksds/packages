@@ -8,7 +8,7 @@ groups=(blocksds-default)
 pkgver=1.17.0
 pkgrel=1
 epoch=
-source=("https://codeberg.org/blocksds/sdk/archive/v$pkgver.zip")
+source=("https://codeberg.org/blocksds/sdk/archive/v$pkgver.tar.gz")
 pkgdesc="Documentation of DS/DSi console homebrew toolchain maintained by AntonioND"
 arch=("any")
 url="https://codeberg.org/blocksds/sdk"
@@ -26,8 +26,6 @@ conflicts=(
 )
 
 package() {
-	rm -rf sdk
-	unzip "v$pkgver.zip"
 	cd sdk
 
 	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
