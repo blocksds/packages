@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: CC0-1.0
 #
 # SPDX-FileContributor: Adrian "asie" Siekierka, 2023-2024
-# SPDX-FileContributor: Antonio Niño Díaz, 2024
+# SPDX-FileContributor: Antonio Niño Díaz, 2024-2026
 
 pkgname=blocksds-toolchain
 sha256sums=('SKIP')
@@ -9,7 +9,7 @@ groups=(blocksds-default)
 pkgver=1.17.0
 pkgrel=1
 epoch=
-source=("$pkgname::git+https://codeberg.org/blocksds/sdk#tag=v$pkgver")
+source=("https://github.com/blocksds/blocksds.github.io/archive/refs/heads/master.zip")
 pkgdesc="Nintendo DS/DSi homebrew toolchain"
 arch=("x86_64" "aarch64")
 url="https://codeberg.org/blocksds/sdk"
@@ -49,26 +49,26 @@ if [ "$WF_HOST_OS" == "linux" ]; then
 fi
 
 prepare() {
-	cd "$pkgname"
+	git clone --recurse-submodules https://codeberg.org/blocksds/sdk -b v$pkgver
 
-	git submodule update --init --recursive
-
-	wf_disable_host_build
+	cd sdk
 
 	if [ "$WF_HOST_OS" == "windows" ]; then
 		# patch ndstool to link iconv explicitly
 		sed -i -e 's/$(LIBS)/$(LIBS) -liconv/' tools/ndstool/Makefile
 	fi
+
+	wf_disable_host_build
 }
 
 build() {
-	cd "$pkgname"
+	cd sdk
 
 	BLOCKSDS=`pwd` make -j`nproc`
 }
 
 package() {
-	cd "$pkgname"
+	cd sdk
 
 	mkdir -p "$pkgdir$WF_DESTDIR"/thirdparty/blocksds/core
 
