@@ -40,7 +40,7 @@ jobs:
       - name: Setup Alpine Linux
         uses: jirutka/setup-alpine@v1
         with:
-          branch: v3.20
+          branch: v3.23
           arch: ${{ matrix.arch }}
           packages: >
             bash
@@ -239,7 +239,7 @@ jobs:
       - name: Setup Alpine Linux
         uses: jirutka/setup-alpine@v1
         with:
-          branch: v3.20
+          branch: v3.23
           arch: x86_64
           packages: >
             bash
