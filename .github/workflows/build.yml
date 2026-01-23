@@ -92,6 +92,8 @@ jobs:
       - name: Build packages
         shell: alpine.sh {0}
         run: |
+          export WONDERFUL_TOOLCHAIN=/opt/wonderful/
+
           bash build.sh blocksds-toolchain
           bash build.sh blocksds-ptexconv
 
@@ -201,6 +203,8 @@ jobs:
       - name: Build packages
         shell: msys2 {0}
         run: |
+          export WONDERFUL_TOOLCHAIN=/opt/wonderful/
+
           bash build.sh blocksds-toolchain
           bash build.sh blocksds-ptexconv
 
@@ -274,7 +278,6 @@ jobs:
           tree
 
           export PATH=/opt/wonderful/bin:$PATH
-          export WONDERFUL_TOOLCHAIN=/opt/wonderful/
 
           mkdir -p packages/rolling/linux/x86_64/
           mkdir -p packages/rolling/linux/aarch64/
