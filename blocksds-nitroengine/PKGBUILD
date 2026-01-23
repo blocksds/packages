@@ -5,10 +5,10 @@
 
 pkgname=blocksds-nitroengine
 groups=(blocksds-extra)
-pkgver=0.15.4
+pkgver=0.15.5
 pkgrel=1
 epoch=
-pkgdesc="AntonioND's library providing functions designed to simplify the process of making a 3D game"
+pkgdesc="Library providing functions designed to simplify the process of making a 3D game"
 arch=(any)
 source=("$pkgname::git+https://codeberg.org/SkyLyrac/nitro-engine#tag=v$pkgver")
 url="https://codeberg.org/SkyLyrac/nitro-engine"
