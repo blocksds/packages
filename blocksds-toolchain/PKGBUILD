@@ -6,7 +6,7 @@
 pkgname=blocksds-toolchain
 sha256sums=('SKIP')
 groups=(blocksds-default)
-pkgver=1.17.1
+pkgver=1.18.0
 pkgrel=1
 epoch=
 source=("https://github.com/blocksds/blocksds.github.io/archive/refs/heads/master.zip")
