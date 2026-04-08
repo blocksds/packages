@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -132,7 +132,7 @@ jobs:
           ls out
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packages_linux_${{ matrix.arch }}
           path: out
@@ -196,7 +196,7 @@ jobs:
           git config --global core.eol lf
 
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -216,7 +216,7 @@ jobs:
           ls out
 
       - name: Archive artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: packages_windows_x86_64
           path: out
@@ -232,7 +232,7 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -270,7 +270,7 @@ jobs:
           curl https://wonderful.asie.pl/bootstrap/wf-bootstrap-x86_64.tar.gz | tar xzvf -
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
 
       - name: Create repo files
         shell: alpine.sh {0}
@@ -351,7 +351,7 @@ jobs:
           tar -cvf ../repo.tar ./*
 
       - name: Upload repo artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: github-pages
           path: repo.tar
@@ -368,8 +368,8 @@ jobs:
 
     steps:
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
