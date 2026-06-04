@@ -85,6 +85,7 @@ jobs:
           if [ "${{ matrix.arch }}" == "x86_64" ]; then
             wf-pacman -Syu --noconfirm \
                   toolchain-llvm-teak-llvm \
+                  toolchain-gcc-xtensa-elf \
                   toolchain-gcc-arm-none-eabi-libpng16 \
                   toolchain-gcc-arm-none-eabi-zlib
           fi
