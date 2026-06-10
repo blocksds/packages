@@ -4,7 +4,7 @@
 
 pkgname=blocksds-ptexconv
 groups=(blocksds-extra)
-pkgver=1.6.0.2
+pkgver=1.6.1.0
 pkgrel=1
 epoch=
 pkgdesc="Tool to convert graphics to formats used by the Nintendo DS"
@@ -26,8 +26,6 @@ options=('!strip')
 
 build() {
 	cd "$pkgname"
-
-	sed -i -e 's/ifdef _WIN32/if 0/' src/main.c
 
 	make -j`nproc`
 }
