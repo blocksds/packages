@@ -224,9 +224,74 @@ jobs:
           compression-level: 0
           if-no-files-found: error
 
+  build_macos:
+    name: Build Pacman packages (macOS)
+    runs-on: macos-latest
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Install prerequisites
+        run: |
+          brew install bash cmake
+
+      # This folder needs to be created as root, but regular users need to be
+      # able to modify it.
+      - name: Create /opt/wonderful folder
+        run: |
+          sudo sh -c "mkdir /opt/wonderful && chown -R runner /opt/wonderful"
+
+      - name: Install Wonderful
+        run: |
+          cd /opt/wonderful
+          curl https://wonderful.asie.pl/bootstrap/wf-bootstrap-darwin-aarch64.tar.gz | tar xzvf -
+
+      - name: Install prerequisites (Wonderful)
+        run: |
+          export PATH=/opt/wonderful/bin:$PATH
+
+          codesign --remove-signature /opt/wonderful/bin/wf-pacman && codesign -s - /opt/wonderful/bin/wf-pacman
+
+          wf-pacman -Syu --noconfirm
+          wf-pacman -Syu --noconfirm
+
+          wf-pacman -Syu --noconfirm \
+                toolchain-gcc-arm-none-eabi
+
+      - name: Build packages
+        run: |
+          export WONDERFUL_TOOLCHAIN=/opt/wonderful/
+
+          bash build.sh blocksds-toolchain
+          bash build.sh blocksds-ptexconv
+
+          mkdir -p out
+          mv */*.pkg.tar.xz out
+
+          echo "Artifacts:"
+          echo "=========="
+          ls out
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v6
+        with:
+          name: packages_darwin_aarch64
+          path: out
+          compression-level: 0
+          if-no-files-found: error
+
   generate_website:
     name: Generate website
-    needs: [build_linux, build_windows]
+    needs: [build_linux, build_windows, build_macos]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -280,6 +345,7 @@ jobs:
 
           export PATH=/opt/wonderful/bin:$PATH
 
+          mkdir -p packages/rolling/darwin/aarch64/
           mkdir -p packages/rolling/linux/x86_64/
           mkdir -p packages/rolling/linux/aarch64/
           mkdir -p packages/rolling/windows/x86_64/
@@ -290,6 +356,9 @@ jobs:
 
           cp packages_linux_x86_64/*.pkg.tar.xz packages/rolling/linux/x86_64/
 
+          cp packages_linux_x86_64/*any.pkg.tar.xz packages/rolling/darwin/aarch64/
+          cp packages_darwin_aarch64/*.pkg.tar.xz packages/rolling/darwin/aarch64/
+
           cp packages_linux_x86_64/*any.pkg.tar.xz packages/rolling/linux/aarch64/
           cp packages_linux_aarch64/*.pkg.tar.xz packages/rolling/linux/aarch64/
 
@@ -297,6 +366,18 @@ jobs:
           cp packages_windows_x86_64/*.pkg.tar.xz packages/rolling/windows/x86_64/
 
           tree
+
+          cd packages/rolling/darwin/aarch64/
+
+            wf-pacman-repo-add blocksds.db.tar.xz *.pkg.tar.xz
+
+            # Remove symlinks for GitHub pages
+            rm blocksds.db
+            rm blocksds.files
+            cp blocksds.db.tar.xz blocksds.db
+            cp blocksds.files.tar.xz blocksds.files
+
+          cd ../../../..
 
           cd packages/rolling/linux/x86_64/
 
@@ -336,6 +417,7 @@ jobs:
 
           # Generate basic index files
 
+          bash gen_index.sh packages/rolling/darwin/aarch64/ true
           bash gen_index.sh packages/rolling/linux/x86_64/ true
           bash gen_index.sh packages/rolling/linux/aarch64/ true
           bash gen_index.sh packages/rolling/windows/x86_64/ true
