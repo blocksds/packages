@@ -422,6 +422,7 @@ jobs:
           bash gen_index.sh packages/rolling/linux/aarch64/ true
           bash gen_index.sh packages/rolling/windows/x86_64/ true
 
+          bash gen_index.sh packages/rolling/darwin/ true
           bash gen_index.sh packages/rolling/linux/ true
           bash gen_index.sh packages/rolling/windows/ true
 
