@@ -1,0 +1,71 @@
+# SPDX-License-Identifier: CC0-1.0
+#
+# SPDX-FileContributor: Antonio Niño Díaz, 2024-2026
+
+pkgname=blocksds-ncurses
+groups=(blocksds-extra)
+pkgver=6.6
+pkgrel=1
+epoch=
+pkgdesc="Library for creating textual user interfaces (TUIs) that work across a wide variety of terminals."
+arch=(any)
+source=(
+    "ncurses.gz::https://invisible-island.net/archives/ncurses/ncurses-${pkgver}.tar.gz"
+    "ncurses-${pkgver}.patch"
+)
+url="https://invisible-island.net/ncurses/"
+license=("complex")
+depends=(
+    blocksds-toolchain
+)
+sha256sums=(
+    '355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11'
+    'SKIP'
+)
+options=('!strip')
+
+. "/opt/wonderful/lib/wf-pacman/runtime-env-vars.sh"
+
+build() {
+	cd "ncurses-${pkgver}"
+
+	patch -p1 < "${srcdir}/ncurses-${pkgver}.patch"
+
+	export WONDERFUL_TOOLCHAIN="/opt/wonderful"
+	export BLOCKSDS="${WONDERFUL_TOOLCHAIN}/thirdparty/blocksds/core"
+	export BLOCKSDSEXT="${WONDERFUL_TOOLCHAIN}/thirdparty/blocksds/external"
+	export PATH="${PATH}:${WONDERFUL_TOOLCHAIN}/toolchain/gcc-arm-none-eabi/bin/"
+
+	./configure \
+		--with-normal \
+		--without-shared --without-progs --without-manpages --without-tests \
+		--target=arm --host=arm --build=amd64 \
+		--disable-database --disable-db-install \
+		--disable-gnat-projects --disable-home-terminfo \
+		--enable-termcap \
+		--prefix=$PWD/builddir \
+		--with-trace \
+		--disable-widec \
+		--enable-getcap \
+		--disable-sigwinch \
+		--enable-ext-colors --enable-rgb-color \
+		--enable-ext-mouse \
+		CFLAGS="-g -mthumb -mcpu=arm946e-s+nofp -O2 -ffunction-sections -fdata-sections -I$BLOCKSDS/libs/libnds/include -D__BLOCKSDS__" \
+		BUILD_CC=gcc \
+		CC=arm-none-eabi-gcc \
+		cf_cv_have_tcgetattr=yes
+
+	make -j`nproc`
+	make install
+}
+
+package() {
+	cd "ncurses-${pkgver}"
+
+	export INSTALLDIR="$pkgdir$WF_DESTDIR"/thirdparty/blocksds/external/ncurses
+
+	mkdir -p ${INSTALLDIR}
+
+	mv builddir/* ${INSTALLDIR}
+	cp COPYING ${INSTALLDIR}
+}

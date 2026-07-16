@@ -1,0 +1,185 @@
+From 7afa6966c2922d0ebb09d1b1eac3dbe9ed6d8c39 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Antonio=20Ni=C3=B1o=20D=C3=ADaz?= <antonio_nd@proton.me>
+Date: Thu, 16 Jul 2026 00:50:13 +0100
+Subject: [PATCH] BlocksDS compatibility changes
+
+---
+ ncurses/curses.priv.h     |  7 ++++-
+ ncurses/trace/lib_trace.c |  7 +++++
+ ncurses/tty/lib_twait.c   | 58 +++++++++++++++++++++++++++++++++++++--
+ ncurses/tty/tty_update.c  | 11 ++++++++
+ 4 files changed, 80 insertions(+), 3 deletions(-)
+
+diff --git a/ncurses/curses.priv.h b/ncurses/curses.priv.h
+index 8999ecd..9c38243 100644
+--- a/ncurses/curses.priv.h
++++ b/ncurses/curses.priv.h
+@@ -791,7 +791,12 @@ extern NCURSES_EXPORT(void) _nc_set_read_thread(bool);
+ 
+ #endif
+ 
+-#if HAVE_CLOCK_GETTIME
++#if defined(__BLOCKSDS__)
++# include <nds/system_counter.h>
++# define TimeType uint64_t
++# define GetClockTime(t) systemCounterGetTicks()
++# define ElapsedSeconds(b,e) (systemCounterTicksToMsec((e) - (b)) / 1000)
++#elif HAVE_CLOCK_GETTIME
+ # define PRECISE_GETTIME 1
+ # define GetClockTime(t) clock_gettime(CLOCK_REALTIME, t)
+ # define TimeType struct timespec
+diff --git a/ncurses/trace/lib_trace.c b/ncurses/trace/lib_trace.c
+index a7197b0..9139abc 100644
+--- a/ncurses/trace/lib_trace.c
++++ b/ncurses/trace/lib_trace.c
+@@ -152,6 +152,11 @@ curses_trace(unsigned tracelevel)
+ 		|| (MyFP = fdopen(MyFD, BIN_W)) == NULL) {
+ 		;		/* EMPTY */
+ 	    }
++
++#ifdef __BLOCKSDS__
++	    MyFD = STDERR_FILENO;
++	    MyFP = stderr;
++#endif
+ 	}
+ 	Locked(_nc_tracing = tracelevel);
+ 	/* Try to set line-buffered mode, or (failing that) unbuffered,
+@@ -189,7 +194,9 @@ curses_trace(unsigned tracelevel)
+ 	}
+     } else if (tracelevel == 0) {
+ 	if (MyFP != NULL) {
++#ifndef __BLOCKSDS__
+ 	    MyFD = dup(MyFD);	/* allow reopen of same file */
++#endif
+ 	    fclose(MyFP);
+ 	    MyFP = NULL;
+ 	}
+diff --git a/ncurses/tty/lib_twait.c b/ncurses/tty/lib_twait.c
+index 8bb7d12..4b47beb 100644
+--- a/ncurses/tty/lib_twait.c
++++ b/ncurses/tty/lib_twait.c
+@@ -54,6 +54,13 @@
+ #include <OS.h>
+ #endif
+ 
++#ifdef __BLOCKSDS__
++#include <nds/cothread.h>
++#include <nds/interrupts.h>
++#include <nds/system_counter.h>
++#include <sys/ioctl.h>
++#endif
++
+ #if USE_KLIBC_KBD
+ #define INCL_KBD
+ #include <os2.h>
+@@ -85,8 +92,13 @@ static long
+ _nc_gettime(TimeType * t0, int first)
+ {
+     long res;
+-
+-#if PRECISE_GETTIME
++#ifdef __BLOCKSDS__
++    uint64_t t1 = systemCounterGetTicks();
++    if (first) {
++	*t0 = t1;
++    }
++    res = (long) systemCounterTicksToMsec(t1 - *t0);
++#elif PRECISE_GETTIME
+     TimeType t1;
+     if (GetClockTime(&t1) == -1) {
+ 	*t0 = t1;
+@@ -191,6 +203,7 @@ _nc_timed_wait(const SCREEN *sp MAYBE_UNUSED,
+     struct pollfd fd_list[MIN_FDS];
+     struct pollfd *fds = fd_list;
+ #elif defined(__BEOS__)
++#elif defined(__BLOCKSDS__)
+ #elif HAVE_SELECT
+     fd_set set;
+ #endif
+@@ -344,6 +357,45 @@ _nc_timed_wait(const SCREEN *sp MAYBE_UNUSED,
+ 	snooze(milliseconds * 1000);
+ 	milliseconds = 0;
+     }
++#elif defined(__BLOCKSDS__)
++    if (mode & (TW_INPUT | TW_MOUSE)) {
++	if (milliseconds < 0) { /* Blocking */
++	    while (1) {
++		int n = 0;
++		if (ioctl(STDIN_FILENO, FIONREAD, &n) == 0) {
++		    if (n > 0) {
++			result = 1;
++			break;
++		    }
++		}
++
++		cothread_yield_irq(IRQ_VBLANK);
++	    }
++	} else { /* Non-blocking */
++	    /*
++	     * Let other threads update before we do anything so that keyboard
++	     * and mouse threads can run.
++	     */
++	    if (milliseconds == 0)
++		cothread_yield();
++
++	    while (1) {
++		int n = 0;
++		if (ioctl(STDIN_FILENO, FIONREAD, &n) == 0) {
++		    if (n > 0) {
++			result = 1;
++			break;
++		    }
++		}
++
++		if (milliseconds == 0)
++                    break;
++
++		usleep(1000);
++		milliseconds--;
++	    }
++	}
++    }
+ #elif HAVE_SELECT
+     /*
+      * select() modifies the fd_set arguments; do this in the
+@@ -495,6 +547,8 @@ _nc_timed_wait(const SCREEN *sp MAYBE_UNUSED,
+ 	    }
+ #elif defined(__BEOS__)
+ 	    result = TW_INPUT;	/* redundant, but simple */
++#elif defined(__BLOCKSDS__)
++	    result = TW_INPUT;
+ #elif HAVE_SELECT
+ 	    if ((mode & TW_MOUSE)
+ 		&& (fd = sp->_mouse_fd) >= 0
+diff --git a/ncurses/tty/tty_update.c b/ncurses/tty/tty_update.c
+index 93dd597..ddb40ce 100644
+--- a/ncurses/tty/tty_update.c
++++ b/ncurses/tty/tty_update.c
+@@ -62,6 +62,10 @@
+ #include <OS.h>
+ #endif
+ 
++#ifdef __BLOCKSDS__
++#include <sys/ioctl.h>
++#endif
++
+ #if defined(TRACE) && HAVE_SYS_TIMES_H && HAVE_TIMES
+ #define USE_TRACE_TIMES 1
+ #else
+@@ -409,6 +413,13 @@ check_pending(NCURSES_SP_DCL0)
+ 	if (howmany >= 0 && n > 0) {
+ 	    have_pending = TRUE;
+ 	}
++#elif defined(__BLOCKSDS__)
++	int n = 0;
++	if (ioctl(STDIN_FILENO, FIONREAD, &n) == 0) {
++	    if (n > 0) {
++		have_pending = TRUE;
++	    }
++	}
+ #elif HAVE_SELECT
+ 	fd_set fdset;
+ 	struct timeval ktimeout;
+-- 
+2.53.0
+
