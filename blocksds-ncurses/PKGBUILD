@@ -40,8 +40,8 @@ build() {
 		--with-normal \
 		--without-shared --without-progs --without-manpages --without-tests \
 		--target=arm --host=arm --build=amd64 \
-		--disable-database --disable-db-install \
-		--disable-gnat-projects --disable-home-terminfo \
+		--disable-db-install --disable-home-terminfo \
+		--disable-gnat-projects \
 		--enable-termcap \
 		--prefix=$PWD/builddir \
 		--with-trace \
