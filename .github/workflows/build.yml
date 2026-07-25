@@ -243,6 +243,7 @@ jobs:
 
       - name: Install prerequisites
         run: |
+          brew update
           brew install bash cmake
 
       # This folder needs to be created as root, but regular users need to be
