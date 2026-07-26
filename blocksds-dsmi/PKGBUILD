@@ -5,13 +5,13 @@
 pkgname=blocksds-dsmi
 groups=(blocksds-extra)
 # Date when this version of the package was released
-pkgver=20260715
+pkgver=20260726
 pkgrel=1
 epoch=
 pkgdesc="DSerial hardware library"
 arch=(any)
-source=("$pkgname::git+https://github.com/NitrousTracker/dsmi#commit=a1e9642c8c09")
-url="https://github.com/NitrousTracker/dsmi"
+source=("$pkgname::git+https://codeberg.org/NitrousTracker/dsmi.git#commit=de98e4a0d1704289bebc59a07429fcd2e3fc0253")
+url="https://codeberg.org/NitrousTracker/dsmi"
 license=("complex")
 depends=(blocksds-toolchain blocksds-dserial)
 sha256sums=('SKIP')

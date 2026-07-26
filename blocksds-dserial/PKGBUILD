@@ -11,8 +11,8 @@ pkgrel=1
 epoch=
 pkgdesc="DSerial hardware library"
 arch=(any)
-source=("$pkgname::git+https://github.com/asiekierka/dserial#branch=main")
-url="https://github.com/asiekierka/dserial"
+source=("$pkgname::git+https://codeberg.org/asie/dserial.git#branch=main")
+url="https://codeberg.org/asie/dserial"
 license=("BSD-3-Clause")
 depends=(blocksds-toolchain)
 sha256sums=('SKIP')
