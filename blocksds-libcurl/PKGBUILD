@@ -5,7 +5,7 @@
 pkgname=blocksds-libcurl
 groups=(blocksds-extra)
 pkgver=8.16.0
-pkgrel=1
+pkgrel=2
 epoch=
 pkgdesc="libcurl - your network transfer library"
 arch=(any)
@@ -54,7 +54,8 @@ build() {
 			-DMBEDCRYPTO_LIBRARY=${BLOCKSDSEXT}/mbedtls/lib/libmbedcrypto.a \
 		-DCURL_USE_LIBPSL=OFF \
 		-DENABLE_THREADED_RESOLVER=OFF \
-		-DHAVE_STDATOMIC_H=OFF
+		-DHAVE_STDATOMIC_H=OFF \
+		-DCMAKE_C_FLAGS="-DSSIZE_MAX=2147483647"
 
 	make -C build -j`nproc`
 }
